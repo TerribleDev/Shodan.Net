@@ -2,7 +2,7 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-/*! \mainpage Shodan.Net    
+/*! \mainpage Shodan.Net
  *   Shodan.net is a simple c# implementation of the shodan api
  *   Shodan.net is missing the streams api, but it will come soon. Most of the action occurs in ShodanClient.cs
 */
