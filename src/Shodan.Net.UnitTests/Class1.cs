@@ -11,17 +11,9 @@ namespace Shodan.Net.UnitTests
     public class Class1
     {
         [Fact]
-        public async Task privateGetsPorts()
+        public void privateGetsPorts()
 
         {
-            var client = new ShodanClient("");
-            var ports = await client.SearchHosts(
-                query: a => a.Withcity("boston")
-                      .Withcountry("usa")
-                      .Before(DateTime.Now.AddDays(-5)),
-                facet: b => b.WithAsn()
-
-                );
         }
     }
 }
