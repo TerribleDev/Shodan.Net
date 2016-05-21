@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/h0x5jv0s8p4ig078/branch/master?svg=true)](https://ci.appveyor.com/project/tparnell8/shodan-net/branch/master)
+
 Visit the official Shodan API documentation at:
 
 [https://developer.shodan.io](https://developer.shodan.io)
