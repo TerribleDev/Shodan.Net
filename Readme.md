@@ -45,3 +45,7 @@ Searching shodan requires you to build up queries, and facets to make it easier 
 
 
 ```
+
+## APi Docs
+
+You can find doxygen docs [here](http://shodan-csharp-docs.azurewebsites.net/) 

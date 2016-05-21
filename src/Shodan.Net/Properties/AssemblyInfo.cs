@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 /*! \mainpage Shodan.Net
  *   Shodan.net is a simple c# implementation of the shodan api
- *   Shodan.net is missing the streams api, but it will come soon. Most of the action occurs in ShodanClient.cs
+ *   Shodan.net is missing the streams api, but it will come soon. Most of the action occurs in Shodan.Net.ShodanClient
 */
 
 // General Information about an assembly is controlled through the following
