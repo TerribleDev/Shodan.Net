@@ -4,6 +4,10 @@ Visit the official Shodan API documentation at:
 
 This is still in active development, error handling might not well handle well. Best bet when working with any libraries you didn't write..harden your calls!
 
+## APi Docs
+
+You can find doxygen docs [here](http://shodan-csharp-docs.azurewebsites.net/) 
+
 ## Installation
 
 `install-package Shodan.Net`
@@ -46,6 +50,3 @@ Searching shodan requires you to build up queries, and facets to make it easier 
 
 ```
 
-## APi Docs
-
-You can find doxygen docs [here](http://shodan-csharp-docs.azurewebsites.net/) 
