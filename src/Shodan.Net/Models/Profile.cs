@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shodan.Net.Models
 {
+    /// <summary>
+    /// Represents data about your profile
+    /// </summary>
     [DataContract]
     public class Profile
     {

@@ -28,6 +28,9 @@ namespace Shodan.Net.Models
         public string Query { get; set; }
     }
 
+    /// <summary>
+    /// Result of <see cref="ShodanClient.GetQueriesAsync(int?, SortOptions?, OrderOption?)"/> and <seealso cref="ShodanClient.SearchQueriesAsync(string, int?)"/>
+    /// </summary>
     [DataContract]
     public class SearchQueries
     {

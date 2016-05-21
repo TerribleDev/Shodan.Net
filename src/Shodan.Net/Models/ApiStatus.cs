@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shodan.Net.Models
 {
+    /// <summary>
+    /// Returns information about the API plan belonging to the given API key.
+    /// </summary>
     [DataContract]
     public class ApiStatus
     {

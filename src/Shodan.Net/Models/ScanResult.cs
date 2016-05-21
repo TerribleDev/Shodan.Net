@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shodan.Net.Models
 {
+    /// <summary>
+    /// result of <see cref="ShodanClient.RequstScanAsync(string)"/>
+    /// </summary>
     [DataContract]
     public class ScanResult
     {

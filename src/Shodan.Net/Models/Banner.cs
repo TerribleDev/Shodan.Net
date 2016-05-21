@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shodan.Net.Models
 {
+    /// <summary>
+    /// Represents basic return data
+    /// </summary>
     [DataContract]
     public class Banner
     {

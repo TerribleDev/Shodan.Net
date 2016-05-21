@@ -10,6 +10,11 @@ namespace Shodan.Net
     {
         internal Dictionary<string, string> queryData { get; set; }
         private HashSet<string> CalledMethods = new HashSet<string>();
+        private string searchText = string.Empty;
+
+        internal QueryGenerator()
+        {
+        }
 
         public QueryGenerator Before(DateTime time)
         {
@@ -39,13 +44,13 @@ namespace Shodan.Net
             return this;
         }
 
-        public QueryGenerator InCity(string city)
+        public QueryGenerator Withcity(string city)
         {
             queryData.Add("city", city);
             return this;
         }
 
-        public QueryGenerator InCountry(string country)
+        public QueryGenerator Withcountry(string country)
         {
             queryData.Add("country", country);
             return this;
@@ -182,24 +187,28 @@ namespace Shodan.Net
             return this;
         }
 
-        public SearchQuery Generate(string searchText)
+        public QueryGenerator WithText(string searchText)
+        {
+            if(!string.IsNullOrWhiteSpace(this.searchText))
+            {
+                throw new ShodanException("Method cannot be called twice");
+            }
+            this.searchText = searchText;
+            return this;
+        }
+
+        internal string Generate()
         {
             var sb = new StringBuilder(searchText);
-            sb.Append(" ");
+            if(!string.IsNullOrWhiteSpace(searchText))
+            {
+                sb.Append(" ");
+            }
             foreach(var item in queryData)
             {
                 sb.Append($"{item.Key}:{item.Value}");
             }
-            return new SearchQuery(sb.ToString());
-        }
-
-        private void EnsureMethodNotCalled(string methodName)
-        {
-            if(CalledMethods.Contains(methodName))
-            {
-                throw new ShodanException($"{methodName} cannot be called twice");
-            }
-            CalledMethods.Add(methodName);
+            return sb.ToString();
         }
     }
 }

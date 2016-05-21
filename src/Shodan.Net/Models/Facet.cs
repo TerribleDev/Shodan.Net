@@ -7,12 +7,15 @@ using System.Threading.Tasks;
 namespace Shodan.Net.Models
 {
     /// <summary>
-    /// result of <see cref="ShodanClient.RequestInternetPortScanAsync(int, string)"/>
+    /// Represents return facet data
     /// </summary>
     [DataContract]
-    public class ScanPortResult
+    public class Facet
     {
-        [DataMember(Name = "id")]
-        public string Id { get; set; }
+        [DataMember(Name = "count")]
+        public int? Count { get; set; }
+
+        [DataMember(Name = "value")]
+        public string Value { get; set; }
     }
 }

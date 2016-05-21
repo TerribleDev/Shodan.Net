@@ -11,18 +11,16 @@ using System.Threading.Tasks;
 
 namespace Shodan.Net
 {
-    public class ShodanClient : IShodanAsyncClient
+    /// <summary>
+    /// Main mechanism to talk to the shodan api. This is what you should use to interact with the api
+    /// </summary>
+    public class ShodanClient : IShodanAsyncClient, IDisposable
     {
         private readonly string apikey;
         private const string BasePath = "https://api.shodan.io";
+        private IRequstHandler RequestHandler = new RequestHandler();
 
         //todo error handle!!!
-        //todo:
-        /*
-            /shodan/host/count
-            /shodan/host/search
-            /shodan/host/search/tokens
-        */
 
         public ShodanClient(string apikey)
         {
@@ -31,6 +29,12 @@ namespace Shodan.Net
                 throw new ArgumentNullException(nameof(apikey));
             }
             this.apikey = apikey;
+        }
+
+        internal ShodanClient(string apikey, IRequstHandler requestHandler)
+            : this(apikey)
+        {
+            RequestHandler = requestHandler;
         }
 
         /// <summary>
@@ -45,7 +49,86 @@ namespace Shodan.Net
                 throw new ArgumentNullException(hostnames);
             }
             var url = new Uri($"{BasePath}/dns/resolve?hostnames={hostnames}&key={this.apikey}");
-            return MakeRequestAsync<Dictionary<string, string>>(url);
+            return RequestHandler.MakeRequestAsync<Dictionary<string, string>>(url);
+        }
+
+        /// <summary>
+        /// Search Shodan using the same query syntax as the website and use facets to get summary information for different properties.
+        /// This method may use API query credits depending on usage. If any of the following criteria are met, your account will be deducated 1 query credit:
+        /// 1. The search query contains a filter.
+        /// 2. Accessing results past the 1st page using the "page". For every 100 results past the 1st page 1 query credit is deducted.
+        /// </summary>
+        /// <param name="query">lambda to generate a query. Shodan search query. The provided string is used to search the database of banners in Shodan, with the additional option to provide filters inside the search query using a "filter:value" format.</param>
+        /// <param name="facet">static class to define facets.</param>
+        /// <param name="page">The page number to page through results 100 at a time (default: 1) </param>
+        /// <param name="minify">True or False; whether or not to truncate some of the larger fields (default: True) </param>
+        /// <returns></returns>
+        public Task<SearchHostResults> SearchHosts(Action<QueryGenerator> query, Action<FacetGenerator> facet = null, int page = 1, bool minify = true)
+        {
+            if(query == null)
+            {
+                throw new ArgumentNullException(nameof(query));
+            }
+            var queryGenerator = new QueryGenerator();
+            query.Invoke(queryGenerator);
+            var queryResult = queryGenerator.Generate();
+            var url = new UriBuilder($"{BasePath}/shodan/host/search")
+            {
+                Query = $"key={apikey}&query={queryResult}&minify={minify.ToString()}"
+            };
+            if(facet != null)
+            {
+                var facetGenerator = new FacetGenerator();
+                facet.Invoke(facetGenerator);
+                url.Query = $"{url.Query}&facets={facetGenerator.GenerateFacets()}";
+            }
+            if(page > 1)
+            {
+                url.Query = $"{url.Query}&page={page}";
+            }
+            return RequestHandler.MakeRequestAsync<SearchHostResults>(url.Uri);
+        }
+
+        /// <summary>
+        /// This method behaves identical to <see cref="SearchHosts(SearchQuery, FacetQuery, int, bool)"/>" with the only difference that this method does not return any host results, it only returns the total number of results that matched the query and any facet information that was requested. As a result this method does not consume query credits.
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="facet"></param>
+        /// <returns></returns>
+        public Task<SearchHostResults> SearchHostsCount(Action<QueryGenerator> query, Action<FacetGenerator> facet = null)
+        {
+            if(query == null)
+            {
+                throw new ArgumentNullException(nameof(query));
+            }
+            var queryGenObj = new QueryGenerator();
+            query.Invoke(queryGenObj);
+
+            var url = new UriBuilder($"{BasePath}/shodan/host/count")
+            {
+                Query = $"key={apikey}&query={queryGenObj.Generate()}"
+            };
+            if(facet != null)
+            {
+                var facetGenObj = new FacetGenerator();
+                facet.Invoke(facetGenObj);
+
+                url.Query = $"{url.Query}&facets={facetGenObj.GenerateFacets()}";
+            }
+
+            return RequestHandler.MakeRequestAsync<SearchHostResults>(url.Uri);
+        }
+
+        public Task<SearchTokens> SearchTokens(Action<QueryGenerator> query)
+        {
+            if(query == null)
+            {
+                throw new ArgumentNullException(nameof(query));
+            }
+            var queryObj = new QueryGenerator();
+            query.Invoke(queryObj);
+            var url = new Uri($"{BasePath}/shodan/host/search/tokens?key={apikey}&query={queryObj.Generate()}");
+            return RequestHandler.MakeRequestAsync<SearchTokens>(url);
         }
 
         /// <summary>
@@ -60,7 +143,7 @@ namespace Shodan.Net
                 throw new ArgumentNullException(nameof(ip));
             }
             var url = new Uri($"{BasePath}/labs/honeyscore/{ip}?key={apikey}");
-            var result = await MakeRequestAsync<string>(url);
+            var result = await RequestHandler.MakeRequestAsync<string>(url);
             double resultParsed;
             if(!double.TryParse(result, out resultParsed))
             {
@@ -76,7 +159,7 @@ namespace Shodan.Net
         public Task<ApiStatus> GetApiStatusAsync()
         {
             var url = new Uri($"{BasePath}/api-info?key={apikey}");
-            return MakeRequestAsync<ApiStatus>(url);
+            return RequestHandler.MakeRequestAsync<ApiStatus>(url);
         }
 
         /// <summary>
@@ -97,7 +180,7 @@ namespace Shodan.Net
                 Query = $"key={this.apikey}&history={history.ToString()}&minify={minify.ToString()}"
             };
 
-            return MakeRequestAsync<Host>(builder.Uri);
+            return RequestHandler.MakeRequestAsync<Host>(builder.Uri);
         }
 
         /// <summary>
@@ -107,7 +190,7 @@ namespace Shodan.Net
         public Task<string> GetMyIpAsync()
         {
             var url = new Uri($"{BasePath}/tools/myip?key={this.apikey}");
-            return MakeRequestAsync<string>(url);
+            return RequestHandler.MakeRequestAsync<string>(url);
         }
 
         /// <summary>
@@ -117,45 +200,7 @@ namespace Shodan.Net
         public Task<List<int>> GetPortsAsync()
         {
             var builder = new Uri($"{BasePath}/shodan/ports?key={this.apikey}");
-            return MakeRequestAsync<List<int>>(builder);
-        }
-
-        private async static Task<T> MakeRequestAsync<T>(Uri url, HttpContent content = null, RequestType requstType = RequestType.GET)
-            where T : class
-        {
-            if(requstType != RequestType.GET && content == null)
-            {
-                throw new ShodanException($"Request type {requstType} requires content");
-            }
-            if(requstType == RequestType.DELETE || requstType == RequestType.PUT)
-            {
-                throw new NotImplementedException("Put and Delete requests have not been implemented properly");
-            }
-            using(var client = new HttpClient())
-            {
-                HttpResponseMessage connection = null;
-                if(requstType == RequestType.GET)
-                {
-                    connection = await client.GetAsync(url);
-                }
-                else if(requstType == RequestType.POST)
-                {
-                    connection = await client.PostAsync(url, content);
-                }
-
-                var statusCode = (int)connection.StatusCode;
-                if(statusCode != 200 && statusCode != 201 && statusCode == 202)
-                {
-                    //todo error handle
-                    return null;
-                }
-                var readResult = await connection.Content.ReadAsStringAsync();
-                if(typeof(T) == typeof(string))
-                {
-                    return readResult as T;
-                }
-                return JsonConvert.DeserializeObject<T>(readResult);
-            }
+            return RequestHandler.MakeRequestAsync<List<int>>(builder);
         }
 
         /// <summary>
@@ -165,7 +210,7 @@ namespace Shodan.Net
         public Task<Profile> GetProfileAsync()
         {
             var url = new Uri($"{BasePath}/account/profile?key={apikey}");
-            return MakeRequestAsync<Profile>(url);
+            return RequestHandler.MakeRequestAsync<Profile>(url);
         }
 
         /// <summary>
@@ -175,7 +220,7 @@ namespace Shodan.Net
         public Task<Dictionary<string, string>> GetProtocolsAsync()
         {
             var url = new Uri($"{BasePath}/shodan/protocols?key={this.apikey}");
-            return MakeRequestAsync<Dictionary<string, string>>(url);
+            return RequestHandler.MakeRequestAsync<Dictionary<string, string>>(url);
         }
 
         /// <summary>
@@ -201,7 +246,7 @@ namespace Shodan.Net
                 var orderName = Enum.GetName(typeof(OrderOption), order.Value);
                 url.Query = $"{url.Query}&order={orderName}";
             }
-            return MakeRequestAsync<SearchQueries>(url.Uri);
+            return RequestHandler.MakeRequestAsync<SearchQueries>(url.Uri);
         }
 
         /// <summary>
@@ -224,7 +269,7 @@ namespace Shodan.Net
             {
                 url.Query = $"{url.Query}&page={page}";
             }
-            return MakeRequestAsync<SearchQueries>(url.Uri);
+            return RequestHandler.MakeRequestAsync<SearchQueries>(url.Uri);
         }
 
         /// <summary>
@@ -239,7 +284,7 @@ namespace Shodan.Net
                 throw new ArgumentNullException(nameof(id));
             }
             var url = new Uri($"{BasePath}/shodan/scan/{id}");
-            return MakeRequestAsync<ScanStatus>(url);
+            return RequestHandler.MakeRequestAsync<ScanStatus>(url);
         }
 
         /// <summary>
@@ -249,7 +294,7 @@ namespace Shodan.Net
         public Task<Dictionary<string, string>> GetServicesAsync()
         {
             var url = new Uri($"{BasePath}/shodan/services?key={this.apikey}");
-            return MakeRequestAsync<Dictionary<string, string>>(url);
+            return RequestHandler.MakeRequestAsync<Dictionary<string, string>>(url);
         }
 
         /// <summary>
@@ -263,7 +308,7 @@ namespace Shodan.Net
             {
                 Query = $"key={apikey}&size={size}"
             };
-            return MakeRequestAsync<TagResult>(url.Uri);
+            return RequestHandler.MakeRequestAsync<TagResult>(url.Uri);
         }
 
         /// <summary>
@@ -281,7 +326,7 @@ namespace Shodan.Net
                 new KeyValuePair<string, string>("protocol", protocol)
             }))
             {
-                return MakeRequestAsync<ScanPortResult>(url, data, RequestType.POST);
+                return RequestHandler.MakeRequestAsync<ScanPortResult>(url, data, RequestType.POST);
             }
         }
 
@@ -304,7 +349,7 @@ namespace Shodan.Net
             var url = new Uri($"{BasePath}/shodan/scan?key={this.apikey}");
             using(var data = new FormUrlEncodedContent(new KeyValuePair<string, string>[] { new KeyValuePair<string, string>("ips", ips) }))
             {
-                return MakeRequestAsync<ScanResult>(url, data, RequestType.POST);
+                return RequestHandler.MakeRequestAsync<ScanResult>(url, data, RequestType.POST);
             }
         }
 
@@ -320,7 +365,35 @@ namespace Shodan.Net
                 throw new ArgumentNullException(ips);
             }
             var url = new Uri($"{BasePath}/dns/reverse?ips={ips}&key={this.apikey}");
-            return MakeRequestAsync<Dictionary<string, List<string>>>(url);
+            return RequestHandler.MakeRequestAsync<Dictionary<string, List<string>>>(url);
         }
+
+        #region IDisposable Support
+
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if(!disposedValue)
+            {
+                if(disposing)
+                {
+                    RequestHandler.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+
+        #endregion IDisposable Support
     }
 }

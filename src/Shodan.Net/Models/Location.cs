@@ -2,6 +2,9 @@
 
 namespace Shodan.Net.Models
 {
+    /// <summary>
+    /// Basic location data returned by shodan
+    /// </summary>
     [DataContract]
     public class Location
     {

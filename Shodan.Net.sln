@@ -7,7 +7,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{060AE71C-AE0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{18A95621-2E1B-48F0-9D38-D7B3513F31D3}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
 		global.json = global.json
+		Readme.md = Readme.md
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Shodan.Net", "src\Shodan.Net\Shodan.Net.xproj", "{2AC1566F-7C77-499E-B9AE-1F029BD7F7E8}"

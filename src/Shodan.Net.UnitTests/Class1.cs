@@ -14,8 +14,14 @@ namespace Shodan.Net.UnitTests
         public async Task privateGetsPorts()
 
         {
-            var client = new ShodanClient("9F0mxmNSaHbe0mYmefwoCZrChT2h0KzC");
-            var ports = await client.GetPortsAsync();
+            var client = new ShodanClient("");
+            var ports = await client.SearchHosts(
+                query: a => a.Withcity("boston")
+                      .Withcountry("usa")
+                      .Before(DateTime.Now.AddDays(-5)),
+                facet: b => b.WithAsn()
+
+                );
         }
     }
 }

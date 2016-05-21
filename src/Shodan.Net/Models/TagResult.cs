@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shodan.Net.Models
 {
+    /// <summary>
+    /// result of <see cref="ShodanClient.GetTagsAsync(int)"/>
+    /// </summary>
     [DataContract]
     public class TagResult
     {

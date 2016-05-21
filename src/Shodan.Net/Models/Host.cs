@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Shodan.Net.Models
 {
+    /// <summary>
+    /// Represents return data for querying hosts
+    /// </summary>
     [DataContract]
     public class Host
     {
@@ -35,5 +38,23 @@ namespace Shodan.Net.Models
 
         [DataMember(Name = "data")]
         public List<Banner> Data { get; set; }
+
+        [DataMember(Name = "city")]
+        public string City { get; set; }
+
+        [DataMember(Name = "longitude")]
+        public double Longitude { get; set; }
+
+        [DataMember(Name = "country_code3")]
+        public string CountryCode3 { get; set; }
+
+        [DataMember(Name = "latitude")]
+        public double Latitude { get; set; }
+
+        [DataMember(Name = "os")]
+        public string Os { get; set; }
+
+        [DataMember(Name = "ports")]
+        public IList<int> Ports { get; set; }
     }
 }

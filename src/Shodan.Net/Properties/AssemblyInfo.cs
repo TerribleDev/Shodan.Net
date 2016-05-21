@@ -2,6 +2,11 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
+/*! \mainpage Shodan.Net    
+ *   Shodan.net is a simple c# implementation of the shodan api
+ *   Shodan.net is missing the streams api, but it will come soon. Most of the action occurs in ShodanClient.cs
+*/
+
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
