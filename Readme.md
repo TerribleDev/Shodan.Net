@@ -2,6 +2,8 @@ Visit the official Shodan API documentation at:
 
 [https://developer.shodan.io](https://developer.shodan.io)
 
+This is still in active development, error handling might not well handle well. Best bet when working with any libraries you didn't write..harden your calls!
+
 ## Installation
 
 `install-package Shodan.Net`
