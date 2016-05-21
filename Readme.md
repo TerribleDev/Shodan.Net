@@ -17,7 +17,7 @@ Create a shodan client. Note that ShodanClient inerhits from IDisposable, so you
 
 `var client = new Shodan.Net.ShodanClient("myapiKey");`
 
-Now just query away.
+Now just query away. You should be able to find all the actions [in the docs](http://shodan-csharp-docs.azurewebsites.net/class_shodan_1_1_net_1_1_shodan_client.html) or just through the docs in intellisense.
 
 ```csharp
 
