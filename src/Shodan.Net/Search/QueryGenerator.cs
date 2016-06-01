@@ -8,7 +8,7 @@ namespace Shodan.Net
 {
     public class QueryGenerator
     {
-        internal Dictionary<string, string> queryData { get; set; }
+        internal Dictionary<string, string> queryData = new Dictionary<string, string>();
         private HashSet<string> CalledMethods = new HashSet<string>();
         private string searchText = string.Empty;
 

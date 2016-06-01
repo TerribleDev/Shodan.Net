@@ -13,7 +13,7 @@ namespace Shodan.Net
     /// </summary>
     public class RequestHandler : IRequstHandler
     {
-        private HttpClient client { get; set; }
+        private HttpClient client = new HttpClient();
 
         public async Task<T> MakeRequestAsync<T>(Uri url, HttpContent content = null, RequestType requstType = RequestType.GET)
            where T : class

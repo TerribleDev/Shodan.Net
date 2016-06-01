@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -13,7 +14,10 @@ namespace Shodan.Net.Models
         /// The parsed certificate properties that includes information such as when it was issued, the SSL extensions, the issuer, subject etc.
         /// </summary>
         [DataMember(Name = "cert")]
-        public dynamic Cert { get; set; }
+        public Certificate Cert { get; set; }
+
+        [IgnoreDataMember]
+        public decimal[] Serial { get; set; }
 
         /// <summary>
         /// Preferred cipher for the SSL connection

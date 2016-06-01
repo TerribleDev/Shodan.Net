@@ -36,7 +36,6 @@ namespace Shodan.Net.Models
         [DataMember(Name = "country_code")]
         public string CountryCode { get; set; }
 
-        [DataMember(Name = "data")]
         public List<Banner> Data { get; set; }
 
         [DataMember(Name = "city")]
