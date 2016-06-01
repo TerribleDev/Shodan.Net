@@ -63,7 +63,7 @@ namespace Shodan.Net
         /// <param name="page">The page number to page through results 100 at a time (default: 1) </param>
         /// <param name="minify">True or False; whether or not to truncate some of the larger fields (default: True) </param>
         /// <returns></returns>
-        public Task<dynamic> SearchHosts(Action<QueryGenerator> query, Action<FacetGenerator> facet = null, int page = 1, bool minify = true)
+        public Task<SearchHostResults> SearchHosts(Action<QueryGenerator> query, Action<FacetGenerator> facet = null, int page = 1, bool minify = true)
         {
             if(query == null)
             {
@@ -86,7 +86,7 @@ namespace Shodan.Net
             {
                 url.Query = $"{url.Query}&page={page}";
             }
-            return RequestHandler.MakeRequestAsync<dynamic>(url.Uri);
+            return RequestHandler.MakeRequestAsync<SearchHostResults>(url.Uri);
         }
 
         /// <summary>

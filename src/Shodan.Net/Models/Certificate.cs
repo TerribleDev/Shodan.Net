@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -37,6 +38,10 @@ namespace Shodan.Net.Models
 
         [DataMember(Name = "ciper")]
         public dynamic Ciper { get; set; }
+
+        [JsonIgnore()]
+        [DataMember(Name = "serial")]
+        public string Serial { get; set; }
     }
 
     public class Fingerprint
