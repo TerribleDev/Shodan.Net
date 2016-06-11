@@ -70,12 +70,12 @@ namespace Shodan.Net.Models
         /// The IP address of the host as an integer
         /// </summary>
         [DataMember(Name = "ip")]
-        public int? Ip { get; set; }
+        public long? Ip { get; set; }
 
         /// <summary>
         /// The IPv6 address of the host as a string. If this is present then the "ip" and "ip_str" fields wont be.
         /// </summary>
-        [DataMember(Name = "ip")]
+        [DataMember(Name = "ipv6")]
         public string Ipv6 { get; set; }
 
         /// <summary>
