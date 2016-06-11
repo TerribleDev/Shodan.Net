@@ -12,6 +12,7 @@ namespace Shodan.Net.Models
     [DataContract]
     public class SearchHostResults
     {
+        [DataMember(Name = "matches")]
         public List<Banner> Matches { get; set; }
 
         [DataMember(Name = "facets")]

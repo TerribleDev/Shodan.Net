@@ -64,7 +64,7 @@ namespace Shodan.Net.Models
         /// The area code for the device's location. Only available for the US.
         /// </summary>
         [DataMember(Name = "area_code")]
-        public int AreaCode { get; set; }
+        public int? AreaCode { get; set; }
 
         /// <summary>
         ///  The designated market area code for the area where the device is located. Only available for the US.
