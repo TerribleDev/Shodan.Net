@@ -7,4 +7,4 @@ before_build:
 build:
   verbosity: minimal
 test_script:
-- cmd: dotnet test .\src\Shodan.Net.UnitTests\
+- cmd: dotnet test .\src\Shodan.Net.UnitTests\Shodan.Net.UnitTests.csproj
