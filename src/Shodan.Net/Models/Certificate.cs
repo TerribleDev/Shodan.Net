@@ -16,7 +16,7 @@ namespace Shodan.Net.Models
         public string Issued { get; set; }
 
         [DataMember(Name = "expires")]
-        public DateTime Expires { get; set; }
+        public string Expires { get; set; }
 
         [DataMember(Name = "expired")]
         public bool Expired { get; set; }
@@ -36,8 +36,8 @@ namespace Shodan.Net.Models
         [DataMember(Name = "issuer")]
         public dynamic Issuer { get; set; }
 
-        [DataMember(Name = "ciper")]
-        public dynamic Ciper { get; set; }
+        [DataMember(Name = "cipher")]
+        public dynamic Cipher { get; set; }
 
         [JsonIgnore()]
         [DataMember(Name = "serial")]
@@ -48,5 +48,6 @@ namespace Shodan.Net.Models
     {
         public string sha256 { get; set; }
         public string sha1 { get; set; }
+        public string serial { get; set; }
     }
 }
