@@ -84,6 +84,9 @@ namespace Shodan.Net.Models
         [DataMember(Name = "domains")]
         public IList<string> Domains { get; set; }
 
+        [DataMember(Name = "cpe", IsRequired = false)]
+        public IList<string> Cpe { get; set; }
+
         /// <summary>
         /// The IP address of the host as a string
         /// </summary>
@@ -130,9 +133,6 @@ namespace Shodan.Net.Models
 
         [DataMember(Name = "info", IsRequired = false)]
         public string Info { get; set; }
-
-        [DataMember(Name = "cpe", IsRequired = false)]
-        public string Cpe { get; set; }
 
         [DataMember(Name = "ssl", IsRequired = false)]
         public SslProperties Ssl { get; set; }

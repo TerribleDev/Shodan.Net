@@ -22,8 +22,8 @@ namespace Shodan.Net.Models
         /// <summary>
         /// Preferred cipher for the SSL connection
         /// </summary>
-        [DataMember(Name = "ciper")]
-        public dynamic Ciper { get; set; }
+        [DataMember(Name = "cipher")]
+        public dynamic Cipher { get; set; }
 
         /// <summary>
         /// An array of certificates, where each string is a PEM-encoded SSL certificate. This includes the user SSL certificate up to its root certificate.
